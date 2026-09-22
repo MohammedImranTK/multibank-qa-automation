@@ -1,0 +1,40 @@
+{
+  "name": "multibank-qa-automation",
+  "version": "1.0.0",
+  "description": "Production-grade Playwright UI automation framework for the mb.io trading platform (Page Object Model, JavaScript)",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:chromium": "playwright test --project=chromium-desktop",
+    "test:firefox": "playwright test --project=firefox-desktop",
+    "test:webkit": "playwright test --project=webkit-desktop",
+    "test:mobile": "playwright test --project=mobile-chrome",
+    "test:cross-browser": "playwright test --project=chromium-desktop --project=firefox-desktop --project=webkit-desktop",
+    "test:navigation": "playwright test tests/navigation.spec.js",
+    "test:trading": "playwright test tests/trading.spec.js",
+    "test:content": "playwright test tests/content-links.spec.js",
+    "test:negative": "playwright test tests/negative-edge-cases.spec.js",
+    "report": "playwright show-report",
+    "codegen": "playwright codegen https://mb.io/en-AE",
+    "install:browsers": "playwright install --with-deps",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "playwright",
+    "qa-automation",
+    "page-object-model",
+    "e2e-testing"
+  ],
+  "author": "Mohammed Imran",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.49.1",
+    "dotenv": "^16.4.7",
+    "eslint": "^8.57.1",
+    "prettier": "^3.4.2"
+  }
+}
