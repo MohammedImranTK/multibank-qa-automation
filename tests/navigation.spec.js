@@ -8,54 +8,77 @@ test.describe('Navigation & Layout', () => {
     await homePage.goto();
   });
 
-  test('top navigation renders with all expected items visible', async ({ homePage }) => {
-    await expect(homePage.nav.nav).toBeVisible();
+  test(
+    'top navigation renders with all expected items visible',
+    { tag: ['@navigation', '@smoke'] },
+    async ({ homePage }) => {
+      await expect(homePage.nav.nav).toBeVisible();
 
-    for (const item of data.getPrimaryNavItems()) {
-      await expect(
-        homePage.nav.navLink(item.name),
-        `Expected nav item "${item.name}" to be visible`
-      ).toBeVisible();
+      for (const item of data.getPrimaryNavItems()) {
+        await expect(
+          homePage.nav.navLink(item.name),
+          `Expected nav item "${item.name}" to be visible`
+        ).toBeVisible();
+      }
     }
-  });
+  );
 
   for (const item of data.getPrimaryNavItems()) {
-    test(`"${item.name}" nav item links to the correct destination`, async ({ homePage, page }) => {
-      const href = await homePage.nav.getNavItemHref(item.name);
-      expect(href, `href for "${item.name}"`).toBeTruthy();
+    test(
+      `"${item.name}" nav item links to the correct destination`,
+      { tag: ['@navigation', '@regression'] },
+      async ({ homePage, page }) => {
+        const href = await test.step(`Read href for "${item.name}"`, async () => {
+          const value = await homePage.nav.getNavItemHref(item.name);
+          expect(value, `href for "${item.name}"`).toBeTruthy();
+          return value;
+        });
 
-      if (item.external) {
-        expect(href).toContain(new URL(item.path).hostname);
-        return;
+        if (item.external) {
+          await test.step('External link points at the expected host', async () => {
+            expect(href).toContain(new URL(item.path).hostname);
+          });
+          return;
+        }
+
+        await test.step(`Click "${item.name}" and land on the expected route`, async () => {
+          await homePage.nav.clickNavItem(item.name);
+          // Client-side routing updates history/content asynchronously and
+          // does not fire a fresh 'domcontentloaded' event, so assert on the
+          // URL directly rather than racing a load-state wait against it.
+          await page.waitForURL((url) => url.pathname.includes(item.path));
+          expect(page.url()).toContain(item.path);
+        });
       }
-
-      await homePage.nav.clickNavItem(item.name);
-      // Client-side routing updates history/content asynchronously and does
-      // not fire a fresh 'domcontentloaded' event, so assert on the URL
-      // directly rather than racing a load-state wait against it.
-      await page.waitForURL((url) => url.pathname.includes(item.path));
-      expect(page.url()).toContain(item.path);
-    });
+    );
   }
 
-  test('navigation behaves correctly at standard desktop viewport sizes', async ({ page, homePage }) => {
-    const desktopViewports = [
-      { width: 1280, height: 800 },
-      { width: 1440, height: 900 },
-      { width: 1920, height: 1080 },
-    ];
+  test(
+    'navigation behaves correctly at standard desktop viewport sizes',
+    { tag: ['@navigation', '@regression'] },
+    async ({ page, homePage }) => {
+      const desktopViewports = [
+        { width: 1280, height: 800 },
+        { width: 1440, height: 900 },
+        { width: 1920, height: 1080 },
+      ];
 
-    for (const viewport of desktopViewports) {
-      await page.setViewportSize(viewport);
-      await expect(
-        homePage.nav.nav,
-        `Nav should render at ${viewport.width}x${viewport.height}`
-      ).toBeVisible();
+      for (const viewport of desktopViewports) {
+        await test.step(`${viewport.width}x${viewport.height}`, async () => {
+          await page.setViewportSize(viewport);
+          await expect(
+            homePage.nav.nav,
+            `Nav should render at ${viewport.width}x${viewport.height}`
+          ).toBeVisible();
 
-      const visibleNames = await homePage.nav.getVisibleDesktopLinkNames();
-      for (const item of data.getPrimaryNavItems()) {
-        expect(visibleNames, `"${item.name}" visible at ${viewport.width}px`).toContain(item.name);
+          const visibleNames = await homePage.nav.getVisibleDesktopLinkNames();
+          for (const item of data.getPrimaryNavItems()) {
+            expect(visibleNames, `"${item.name}" visible at ${viewport.width}px`).toContain(
+              item.name
+            );
+          }
+        });
       }
     }
-  });
+  );
 });
