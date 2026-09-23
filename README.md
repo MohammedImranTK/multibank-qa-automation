@@ -48,6 +48,9 @@ src/
 tests/                        Spec files, grouped by the brief's categories
 issues/                       Known, investigated-but-unresolved findings
                               (e.g. a third-party link rejecting WebKit)
+docs/                          Task 2 written deliverables (markdown + PDF)
+scripts/                       One-off maintenance scripts (e.g. markdown to
+                              PDF for the Task 2 docs)
 ```
 
 ### Design principles
@@ -166,4 +169,14 @@ request signature specifically.
 ## Task 2 — QA Strategy
 
 See [`docs/`](docs/) for the written strategy answers, test plan, release
-readiness checklist, and risk matrix.
+readiness checklist, and risk matrix (markdown, source of truth). PDF
+versions of the same four documents are in [`docs/pdf/`](docs/pdf/) for easy
+standalone reading/printing:
+
+- [`task2-qa-strategy.pdf`](docs/pdf/task2-qa-strategy.pdf)
+- [`task2-test-plan.pdf`](docs/pdf/task2-test-plan.pdf)
+- [`task2-release-readiness-checklist.pdf`](docs/pdf/task2-release-readiness-checklist.pdf)
+- [`task2-risk-matrix.pdf`](docs/pdf/task2-risk-matrix.pdf)
+
+Regenerate them after editing the markdown with:
+`node scripts/generate-task2-pdfs.js`.
