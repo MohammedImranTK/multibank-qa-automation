@@ -1,4 +1,5 @@
 const { TestDataProvider } = require('../utils/TestDataProvider');
+const { dismissSubscribeModal } = require('../utils/InterstitialHandler');
 
 /**
  * The top navigation bar is present, identical, and independently
@@ -38,6 +39,11 @@ class NavigationComponent {
   }
 
   async clickNavItem(name) {
+    // Defensive re-check: the subscribe interstitial (handled once already
+    // in BasePage.goto()) has been observed appearing on a short delay
+    // after initial load, which would otherwise land right in the gap
+    // between goto() finishing and this click firing.
+    await dismissSubscribeModal(this.page, 500);
     await this.navLink(name).click();
   }
 

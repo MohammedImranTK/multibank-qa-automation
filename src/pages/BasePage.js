@@ -1,5 +1,6 @@
 const { ConfigManager } = require('../utils/ConfigManager');
 const { Logger } = require('../utils/Logger');
+const { dismissSubscribeModal } = require('../utils/InterstitialHandler');
 
 /**
  * Common behaviour shared by every page object: navigation, load-state
@@ -22,6 +23,7 @@ class BasePage {
     this.logger.step(this.constructor.name, `Navigating to ${url}`);
     const response = await this.page.goto(url, { waitUntil: 'domcontentloaded' });
     await this.page.waitForLoadState('load');
+    await dismissSubscribeModal(this.page);
     return response;
   }
 

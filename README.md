@@ -43,6 +43,8 @@ src/
                               src/data/*.js fixtures
     linkChecker.js            Real HTTP link resolution via APIRequestContext
     NetworkConditions.js      Slow-network simulation for timeout tests
+    InterstitialHandler.js    Dismisses known marketing interstitials that
+                              can overlay the page (see issues/002)
   data/                       Static fixtures (nav items, routes, expected
                               content) — never require()'d directly by tests
 tests/                        Spec files, grouped by the brief's categories
@@ -160,11 +162,16 @@ JUnit report as artifacts per project.
 
 ## Known issues
 
-Investigated-but-unresolved findings are tracked as individual files under
-[`issues/`](issues/) rather than silently skipped or hidden — e.g.
-[`001-webkit-download-app-link-check-fails.md`](issues/001-webkit-download-app-link-check-fails.md)
-documents a third-party attribution redirector that rejects WebKit's
-request signature specifically.
+Investigated findings (resolved or still open) are tracked as individual
+files under [`issues/`](issues/) rather than silently skipped or hidden:
+
+- [`001-webkit-download-app-link-check-fails.md`](issues/001-webkit-download-app-link-check-fails.md) —
+  open. A third-party attribution redirector rejects WebKit's request
+  signature specifically; not an app or framework bug.
+- [`002-ci-only-nav-click-modal-block.md`](issues/002-ci-only-nav-click-modal-block.md) —
+  resolved. CI (all browsers) hit a fresh-context "Subscribe" interstitial
+  that never appeared locally; the suite now defensively dismisses it in
+  `BasePage.goto()` and `NavigationComponent.clickNavItem()`.
 
 ## Task 2 — QA Strategy
 
